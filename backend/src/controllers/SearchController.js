@@ -6,11 +6,9 @@ module.exports = {
     async index (request, response) {
         const { latitude, longitude, techs } = request.query;
 
-        const techsArray = parseStringAsArray(techs);
-
         const devs = await Dev.find({
             techs: {
-                $in: techsArray,
+                $in: parseStringAsArray(techs),
             },
             location: {
                 $near: {
@@ -23,6 +21,6 @@ module.exports = {
             }
         });
 
-        return response.json(devs);
+        return response.json({devs});
     },
 };
