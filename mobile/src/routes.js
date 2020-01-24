@@ -9,7 +9,7 @@ const Routes = createAppContainer(
         Main: {
             screen: Main,
             navigationOptions: {
-                title: 'Futuro app da GoMoov por 50k',
+                title: 'LocalizaDevs',
             }
         },
         Profile: {

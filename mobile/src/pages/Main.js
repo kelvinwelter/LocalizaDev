@@ -5,6 +5,7 @@ import { requestPermissionsAsync, getCurrentPositionAsync, stopLocationUpdatesAs
 import { MaterialIcons } from '@expo/vector-icons';
 
 import api from '../services/api';
+import socket, { connect, disconnect, subscribeToNewDevs } from '../services/socket';
 
 function Main({ navigation }) {
     const [devs, setDevs] = useState([]);
@@ -34,6 +35,22 @@ function Main({ navigation }) {
         loadInitialPosition();
     }, []);
 
+    useEffect(() => {
+        subscribeToNewDevs(dev => setDevs([...devs, dev]));
+    }, [devs]);
+
+    function setupWebsocket() {
+        disconnect();
+
+        const { latitude, longitude } = currentRegion;
+
+        connect(
+            latitude,
+            longitude,
+            techs,
+        );
+    }
+
     async function loadDevs() {
         const { latitude, longitude } = currentRegion;
 
@@ -48,6 +65,8 @@ function Main({ navigation }) {
         console.log(response.data);
 
         setDevs(response.data.devs);
+
+        if (response.data.devs.length !== 0) setupWebsocket();
     }
 
     function handleRegionChange(region) {
@@ -92,7 +111,7 @@ function Main({ navigation }) {
             <View style={styles.searchForm}>
                 <TextInput
                     style={styles.searchInput}
-                    placeholder="Pra onde você quer ir?"
+                    placeholder="Buscar por tecnologias"
                     placeholderTextColor= "#999"
                     autoCapitalize="words"
                     autoCorrect={false}
