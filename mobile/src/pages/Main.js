@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Image, View, Text, TextInput, TouchableOpacity } from 'react-native';
+import { StyleSheet, Image, View, Text, TextInput, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
 import MapView, { Marker, Callout } from 'react-native-maps';
+import { Header, useHeaderHeight } from 'react-navigation-stack';
 import { requestPermissionsAsync, getCurrentPositionAsync, stopLocationUpdatesAsync } from 'expo-location';
 import { MaterialIcons } from '@expo/vector-icons';
 
@@ -8,6 +9,7 @@ import api from '../services/api';
 import socket, { connect, disconnect, subscribeToNewDevs } from '../services/socket';
 
 function Main({ navigation }) {
+    const headerHeight = useHeaderHeight();
     const [devs, setDevs] = useState([]);
     const [currentRegion, setCurrentRegion] = useState(null);
     const [techs, setTechs] = useState('');
@@ -108,7 +110,12 @@ function Main({ navigation }) {
                 </Marker>
                 ))}
             </MapView>
-            <View style={styles.searchForm}>
+            <KeyboardAvoidingView 
+                style={styles.searchForm}
+                behavior='padding'
+                enabled
+                keyboardVerticalOffset = {headerHeight + 20}
+            >
                 <TextInput
                     style={styles.searchInput}
                     placeholder="Buscar por tecnologias"
@@ -122,13 +129,17 @@ function Main({ navigation }) {
                 <TouchableOpacity onPress={loadDevs} style={styles.loadButton}>
                     <MaterialIcons name="my-location" size={20} color="#fff" />
                 </TouchableOpacity>
-            </View>
+            </KeyboardAvoidingView>
         </>
     );
 }
 
 const styles = StyleSheet.create({
     map: {
+        flex: 1,
+    },
+
+    container: {
         flex: 1,
     },
 
@@ -156,11 +167,12 @@ const styles = StyleSheet.create({
 
     devTechs: {
         marginTop: 5,
+        marginBottom: 5,
     },
 
     searchForm: {
         position: 'absolute',
-        top: 20,
+        bottom: 20,
         left: 20,
         right: 20,
         zIndex: 5,
