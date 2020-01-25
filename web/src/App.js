@@ -45,6 +45,7 @@ function App() {
           ))}
         </ul>
       </main>
+      <div className="background"></div>
     </div>
   );
 }
